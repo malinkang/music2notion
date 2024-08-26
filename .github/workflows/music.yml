@@ -16,6 +16,7 @@ jobs:
         NOTION_PAGE: ${{ secrets.NOTION_PAGE }}
         EMAIL: ${{ secrets.EMAIL }}
         PASSWORD: ${{ secrets.PASSWORD }}
+        COOKIE: ${{ secrets.COOKIE }}
         YEAR: ${{ vars.YEAR }}
         REPOSITORY: ${{ github.repository }}
     steps:
