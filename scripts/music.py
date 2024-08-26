@@ -50,6 +50,7 @@ def get_singer(id):
         )
         singer_detail_cache[id] = avatar
         return avatar
+    return "https://www.notion.so/icons/user-circle-filled_gray.svg"
 
 
 def get_play_list(id, cookie):
