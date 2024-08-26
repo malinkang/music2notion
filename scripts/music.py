@@ -79,6 +79,7 @@ def get_play_list(id, cookie):
 
 def insert_music(tracks, playlist_database_id):
     for track in tracks:
+        print(track)
         item = {}
         item["歌曲"] = track.get("name")
         item["Id"] = str(track.get("id"))
