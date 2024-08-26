@@ -175,6 +175,8 @@ if __name__ == "__main__":
     playlist = get_playlist_detail(playlist_id)
     playlist_name = playlist.get("name")
     playlist_cover= playlist.get("coverImgUrl")
+    playlist_database_id = notion_helper.get_relation_id(playlist_name,notion_helper.playlist_database_id,get_icon(playlist_cover))
     ids = [utils.get_property_value(song.get("properties").get("Id")) for song in songs]
     songs = get_play_list(playlist_id,cookie)
     songs =  [item for item in songs if item['id'] not in ids]
+    insert_music(songs,playlist_database_id)
