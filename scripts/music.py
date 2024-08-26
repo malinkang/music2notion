@@ -104,7 +104,7 @@ def insert_music(tracks, playlist_database_id):
             )
         ]
         item["歌单"] = [playlist_database_id]
-        item["日期"] = pendulum.now(tz="Asia/Shanghai").int_timestamp
+        item["日期"] = pendulum.now().int_timestamp
         properties = utils.get_properties(item, song_properties_type_dict)
         parent = {
             "database_id": notion_helper.song_database_id,
