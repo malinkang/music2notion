@@ -90,7 +90,6 @@ def insert_music(tracks,playlist_database_id):
         item = {}
         item["歌曲"] = track.get("name")
         item["Id"] =  str(track.get("id"))
-        item["平台"] = "网易云音乐"
         item["歌手"] = [
             notion_helper.get_relation_id(
                 x.get("name"),
