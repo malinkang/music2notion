@@ -72,7 +72,6 @@ def get_play_list(id, cookie):
         if not songs:  # 如果返回的songs列表为空，跳出循环
             break
         results.extend(songs)  # 将当前请求返回的songs列表添加到results中
-        return results
         print(f"获取歌曲个数{len(results)}")
         offset += limit  # 更新offset值，准备下一次请求
     # 将所有获取的数据写入到文件中
