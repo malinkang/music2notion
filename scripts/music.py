@@ -72,6 +72,7 @@ def get_play_list(id, cookie):
         if not songs:  # 如果返回的songs列表为空，跳出循环
             break
         results.extend(songs)  # 将当前请求返回的songs列表添加到results中
+        return results
         print(f"获取歌曲个数{len(results)}")
         offset += limit  # 更新offset值，准备下一次请求
     # 将所有获取的数据写入到文件中
@@ -169,7 +170,11 @@ if __name__ == "__main__":
     playlist_database_id = notion_helper.get_relation_id(
         playlist_name, notion_helper.playlist_database_id, get_icon(playlist_cover)
     )
+    for index,item in enumerate(songs):
+        notion_helper.delete_block(item.get("id"))
+        print(f"delete {index}")
     ids = [utils.get_property_value(song.get("properties").get("Id")) for song in songs]
     songs = get_play_list(playlist_id, cookie)
-    songs = [item for item in songs if item["id"] not in ids]
+    songs = [item for item in songs if str(item["id"]) not in ids]
+    songs = list(reversed(songs))
     insert_music(songs, playlist_database_id)
