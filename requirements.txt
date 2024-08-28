@@ -5,3 +5,4 @@ retrying
 pendulum
 emoji
 python-dotenv
+cryptography
