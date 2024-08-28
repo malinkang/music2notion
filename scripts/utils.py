@@ -185,7 +185,7 @@ def get_properties(dict1, dict2):
             property = {
                 "date": {
                     "start": pendulum.from_timestamp(
-                        value, tz="Asia/Shanghai"
+                        value
                     ).to_datetime_string()
                 }
             }
