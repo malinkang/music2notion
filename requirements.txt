@@ -6,4 +6,3 @@ pendulum
 emoji
 python-dotenv
 cryptography
-pycryptodome
