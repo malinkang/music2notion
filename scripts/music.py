@@ -79,8 +79,8 @@ def get_play_list(id, cookie):
 
 
 def insert_music(tracks, playlist_database_id):
-    for track in tracks:
-        print(track)
+    for index,track in enumerate(tracks):
+        print(f"一共{len(tracks)}首，正在插入第{index+1}首")
         item = {}
         item["歌曲"] = track.get("name")
         item["Id"] = str(track.get("id"))
@@ -169,9 +169,6 @@ if __name__ == "__main__":
     playlist_database_id = notion_helper.get_relation_id(
         playlist_name, notion_helper.playlist_database_id, get_icon(playlist_cover)
     )
-    for index,item in enumerate(songs):
-        notion_helper.delete_block(item.get("id"))
-        print(f"delete {index}")
     ids = [utils.get_property_value(song.get("properties").get("Id")) for song in songs]
     songs = get_play_list(playlist_id, cookie)
     songs = [item for item in songs if str(item["id"]) not in ids]
