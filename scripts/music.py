@@ -240,24 +240,24 @@ if __name__ == "__main__":
     playlist_id = 13176243
     songs = notion_helper.query_all(database_id=notion_helper.song_database_id)
     print(f"从Notion中获取{len(songs)}首")
-    # for index,song in enumerate(songs):
-    #     notion_helper.delete_block(song.get("id"))
-    #     print(f"一共{len(songs)}条，正在删除第{index}条")
+    for index,song in enumerate(songs):
+        notion_helper.delete_block(song.get("id"))
+        print(f"一共{len(songs)}条，正在删除第{index}条")
     # # 获取歌单详情
-    playlist = get_playlist_detail(playlist_id)
-    playlist_name = playlist.get("name")
-    playlist_cover = playlist.get("coverImgUrl")
-    playlist_database_id = notion_helper.get_relation_id(
-        playlist_name, notion_helper.playlist_database_id, get_icon(playlist_cover)
-    )
-    ids = [utils.get_property_value(song.get("properties").get("Id")) for song in songs]
-    songs = get_play_list(playlist_id, cookie)
-    songs = [item for item in songs if str(item["id"]) not in ids]
-    songs = list(reversed(songs))
-    ids = [str(item.get("id")) for item in songs]
-    ids = formatted_str = json.dumps(ids)
-    urls = get_mp3(ids)
-    for song in songs:
-        if song.get("id") in urls:
-            song["url"] = urls.get("id")
-    insert_music(songs, playlist_database_id)
+    # playlist = get_playlist_detail(playlist_id)
+    # playlist_name = playlist.get("name")
+    # playlist_cover = playlist.get("coverImgUrl")
+    # playlist_database_id = notion_helper.get_relation_id(
+    #     playlist_name, notion_helper.playlist_database_id, get_icon(playlist_cover)
+    # )
+    # ids = [utils.get_property_value(song.get("properties").get("Id")) for song in songs]
+    # songs = get_play_list(playlist_id, cookie)
+    # songs = [item for item in songs if str(item["id"]) not in ids]
+    # songs = list(reversed(songs))
+    # ids = [str(item.get("id")) for item in songs]
+    # ids = formatted_str = json.dumps(ids)
+    # urls = get_mp3(ids)
+    # for song in songs:
+    #     if song.get("id") in urls:
+    #         song["url"] = urls.get("id")
+    # insert_music(songs, playlist_database_id)
