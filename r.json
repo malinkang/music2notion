@@ -1,5 +1,15 @@
 {
-    "type": "month",
+    "ids": "[\"1888915574_0\",\"393685_0\"]",
+    "level": "exhigh",
+    "encodeType": "aac",
+    "trialMode": "10",
+    "immerseType": "aac",
+    "cliUserId": "16663700",
+    "cliVipTypes": "[1,6]",
+    "trialModes": "{\"1888915574\":10,\"393685\":10}",
+    "supportDolby": "false",
+    "volumeBalance": "1",
+    "djVolumeBalance": "1",
     "header": "{}",
     "e_r": true
 }

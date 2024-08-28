@@ -79,12 +79,22 @@ def _eapi_request(path: str, params: dict) -> dict:
 
 if __name__ == "__main__":
     params = {
-    "type": "month",
+    "ids": "[\"1888915574_0\",\"393685_0\"]",
+    "level": "exhigh",
+    "encodeType": "aac",
+    "trialMode": "10",
+    "immerseType": "aac",
+    "cliUserId": "16663700",
+    "cliVipTypes": "[1,6]",
+    "trialModes": "{\"1888915574\":10,\"393685\":10}",
+    "supportDolby": "false",
+    "volumeBalance": "1",
+    "djVolumeBalance": "1",
     "header": "{}",
     "e_r": True
-} 
-    data = _eapi_request("/eapi/content/activity/listen/data/report",params=params)
-    with open("data.json","w") as f:
+}
+    data = _eapi_request("/eapi/song/enhance/player/url/v1",params=params)
+    with open("data2.json","w") as f:
         f.write(json.dumps(data,indent=4,ensure_ascii=False))
 # end main
 # 请求参数

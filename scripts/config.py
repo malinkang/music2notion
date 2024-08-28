@@ -19,6 +19,7 @@ song_properties_type_dict = {
     "歌手":RELATION,
     "歌单":RELATION,
     "平台":SELECT,
+    "URL":URL
 }
 
 TAG_ICON_URL = "https://www.notion.so/icons/tag_gray.svg"
