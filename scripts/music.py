@@ -154,6 +154,7 @@ def get_play_list(id, cookie):
         results.extend(songs)  # 将当前请求返回的songs列表添加到results中
         print(f"获取歌曲个数{len(results)}")
         offset += limit  # 更新offset值，准备下一次请求
+        return results
     # 将所有获取的数据写入到文件中
     return results
 
@@ -259,5 +260,5 @@ if __name__ == "__main__":
     urls = get_mp3(ids)
     for song in songs:
         if song.get("id") in urls:
-            song["url"] = urls.get("id")
+            song["url"] = urls.get(song.get("id"))
     insert_music(songs, playlist_database_id)
