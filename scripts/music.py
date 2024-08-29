@@ -121,7 +121,7 @@ def get_mp3(ids):
         "e_r": True,
     }
     data = eapi_request("/eapi/song/enhance/player/url/v1", params=params)
-    print(f"data = {data}")
+    #有的链接后面带？比如mp3?xxx=xx tg会不识别
     results = {x.get("id"): remove_query_string(x.get("url")) for x in data.get("data")}
     return results
 
