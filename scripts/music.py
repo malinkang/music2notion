@@ -20,7 +20,14 @@ from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from config import song_properties_type_dict, USER_ICON_URL
 from utils import get_icon, split_emoji_from_string
 from dotenv import load_dotenv
+from urllib.parse import urlparse
 
+def remove_query_string(url):
+    # 解析 URL
+    parsed_url = urlparse(url)
+    # 重新构建 URL，不包括查询字符串
+    cleaned_url = parsed_url._replace(query='').geturl()
+    return cleaned_url
 # AES 解密函数
 EAPI_KEY = b"e82ckenh8dichen8"
 EAPI_CRYPTOR = AES.new(EAPI_KEY, AES.MODE_ECB)
@@ -115,7 +122,7 @@ def get_mp3(ids):
     }
     data = eapi_request("/eapi/song/enhance/player/url/v1", params=params)
     print(f"data = {data}")
-    results = {x.get("id"): x.get("url") for x in data.get("data")}
+    results = {x.get("id"): remove_query_string(x.get("url")) for x in data.get("data")}
     return results
 
 
@@ -250,6 +257,7 @@ if __name__ == "__main__":
     # password = os.getenv('PASSWORD').strip()
     # if phone and password:
     #     cookie = login(phone,password)
+    
     cookie = os.getenv("COOKIE").strip()
     headers["cookie"] = cookie
     ip = cnip()
