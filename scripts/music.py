@@ -114,6 +114,7 @@ def get_mp3(ids):
         "e_r": True,
     }
     data = eapi_request("/eapi/song/enhance/player/url/v1", params=params)
+    print(f"data = {data}")
     results = {x.get("id"): x.get("url") for x in data.get("data")}
     return results
 
