@@ -196,8 +196,8 @@ class NotionHelper:
         )
 
     @retry(stop_max_attempt_number=3, wait_fixed=5000)
-    def create_page(self, parent, properties, icon):
-        return self.client.pages.create(parent=parent, properties=properties, icon=icon)
+    def create_page(self, parent, properties, icon,cover):
+        return self.client.pages.create(parent=parent, properties=properties, icon=icon,cover=cover)
 
     @retry(stop_max_attempt_number=3, wait_fixed=5000)
     def query(self, **kwargs):
