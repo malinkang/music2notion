@@ -1,0 +1,10 @@
+requests
+notion-client
+github-heatmap
+retrying
+pendulum
+emoji
+python-dotenv
+cryptography
+pycryptodome
+pillow
