@@ -21,7 +21,8 @@ from config import song_properties_type_dict, USER_ICON_URL
 from utils import get_icon, split_emoji_from_string
 from dotenv import load_dotenv
 from urllib.parse import urlparse
-
+from PIL import Image
+import io
 def remove_query_string(url):
     # 解析 URL
     parsed_url = urlparse(url)
@@ -213,6 +214,13 @@ def insert_music(tracks, playlist_database_id):
             cover=get_icon(cover),
             icon=get_icon(cover),
         )
+        file = download(track.get("url"),track.get("name"))
+        cover = download(track.get("al").get("picUrl"),track.get("name"))
+        # lyric = get_lyric(track.get("id"))
+        
+        send(file,cover,track.get("name"),"&".join([x.get("name") for x in track.get("ar")])
+)
+        
 
 
 def get_playlist_detail(id):
@@ -255,35 +263,118 @@ def get_like_playlist(uid,nickname):
             return playlist[0].get("id")
     else:
         print(f"get failed {response.text}")
+        
+def get_lyric(id):
+    """获取歌词，并保存到文件中"""
+    response = requests.get(
+        f"https://netease-cloud-music.malinkang.com/lyric?id={id}", headers=headers
+    )
+    if response.ok:
+        lyrics = response.json().get("lrc", {}).get("lyric", "")
+        return lyrics
+    else:
+        print(f"获取歌词失败 {response.text}")
+
+def download(url,name):
+    if url:
+        response = requests.get(url)
+        if response.ok:
+            extension = url.split('.')[-1] if '.' in url else 'unknown'
+            file_name = f"{name}.{extension}"
+            with open(file_name, 'wb') as f:
+                f.write(response.content)
+            file_size_kb = os.path.getsize(file_name) / 1024
+            print(f"{name} 下载成功，保存为 {file_name}，文件大小为 {file_size_kb:.2f} KB")
+            return file_name
+        else:
+            print(f"Failed to download {name} from {url}")
+def compress_thumb(cover_path, max_size_kb=200, max_dim=320):
+    """压缩图片作为Telegram缩略图"""
+    # 检查原始文件大小
+    original_size = os.path.getsize(cover_path)
+    if original_size <= max_size_kb * 1024:
+        with open(cover_path, 'rb') as f:
+            return io.BytesIO(f.read())
+    
+    # 原图过大，需要压缩
+    img = Image.open(cover_path)
+    
+    # 如果图片模式是RGBA，转换为RGB
+    if img.mode in ('RGBA', 'P'):
+        img = img.convert('RGB')
+    
+    # 调整尺寸
+    width, height = img.size
+    if width > max_dim or height > max_dim:
+        ratio = min(max_dim/width, max_dim/height)
+        new_size = (int(width*ratio), int(height*ratio))
+        img = img.resize(new_size, Image.Resampling.LANCZOS)
+    
+    # 压缩图片
+    buffer = io.BytesIO()
+    quality = 95
+    img.save(buffer, format='JPEG', quality=quality)
+    
+    # 如果大小超过限制，逐步降低质量直到满足要求
+    while buffer.tell() > max_size_kb * 1024 and quality > 10:
+        buffer.seek(0)
+        buffer.truncate()
+        quality -= 5
+        img.save(buffer, format='JPEG', quality=quality)
+    
+    buffer.seek(0)
+    return buffer
+
+def send(audio,cover,title, performer):
+    # 配置信息
+    BOT_TOKEN = "5509900379:AAHSimr7FiKrclApJImy91A3Dff4R4g2OPk"  # 替换为你的 Bot Token
+    CHAT_ID = "902643712"  # 替换为频道的 Chat ID
+
+    # 构造请求 URL
+    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendAudio"
+
+    # 上传音频文件
+    with open(audio, 'rb') as audio_file:
+        thumb_buffer = compress_thumb(cover)
+        response = requests.post(
+            url,
+            data={"chat_id": CHAT_ID, 'title': title,'performer': performer  },
+            files={"audio": audio_file, 'thumb': ('thumb.jpg', thumb_buffer, 'image/jpeg')}
+        )
+    # 检查结果
+    if response.status_code == 200:
+        print("音频文件发送成功！")
+    else:
+        print(f"发送失败，错误信息: {response.text}")
 
 
 if __name__ == "__main__":
     notion_helper = NotionHelper()
     auth = HTTPBasicAuth(f"{os.getenv('PHONE').strip()}", f"{os.getenv('PASSWORD').strip()}")
-    phone = os.getenv('PHONE').strip()
-    password = os.getenv('PASSWORD').strip()
-    if phone and password:
-        user_info = login(phone,password)
-        uid = user_info.get("profile").get("userId")
-        nickname = user_info.get("profile").get("nickname")
-        cookie = user_info.get("cookie")
-        headers["cookie"] = cookie
-        playlist_id = get_like_playlist(uid,nickname)
-        playlist = get_playlist_detail(playlist_id)
-        playlist_name = playlist.get("name")
-        playlist_cover = playlist.get("coverImgUrl")
-        playlist_database_id = notion_helper.get_relation_id(
-            playlist_name, notion_helper.playlist_database_id, get_icon(playlist_cover)
-        )
-        songs = notion_helper.query_all(notion_helper.song_database_id)
-        ids = [utils.get_property_value(song.get("properties").get("Id")) for song in songs]
-        songs = get_play_list(playlist_id, cookie)
-        songs = [item for item in songs if str(item["id"]) not in ids]
-        songs = list(reversed(songs))
-        ids = [str(item.get("id")) for item in songs]
-        ids = formatted_str = json.dumps(ids)
-        urls = get_mp3(ids)
-        for song in songs:
-            if song.get("id") in urls:
-                song["url"] = urls.get(song.get("id"))
-        insert_music(songs, playlist_database_id)
+    # phone = os.getenv('PHONE').strip()
+    # password = os.getenv('PASSWORD').strip()
+    # if phone and password:
+    # user_info = login(phone,password)
+    uid = "16663700"
+    nickname = "malinkang"
+    cookie = os.getenv('COOKIE')
+    headers["cookie"] = cookie
+    playlist_id = get_like_playlist(uid,nickname)
+    playlist = get_playlist_detail(playlist_id)
+    playlist_name = playlist.get("name")
+    playlist_cover = playlist.get("coverImgUrl")
+    playlist_database_id = notion_helper.get_relation_id(
+        playlist_name, notion_helper.playlist_database_id, get_icon(playlist_cover)
+    )
+    songs = notion_helper.query_all(notion_helper.song_database_id)
+    ids = [utils.get_property_value(song.get("properties").get("Id")) for song in songs]
+    songs = get_play_list(playlist_id, cookie)
+    songs = [item for item in songs if str(item["id"]) not in ids]
+    songs = list(reversed(songs))
+    ids = [str(item.get("id")) for item in songs]
+    ids = formatted_str = json.dumps(ids)
+    urls = get_mp3(ids)
+    for song in songs:
+        if song.get("id") in urls:
+            song["url"] = urls.get(song.get("id"))
+    insert_music(songs, playlist_database_id)
