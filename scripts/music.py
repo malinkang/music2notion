@@ -152,6 +152,7 @@ if __name__ == "__main__":
     songs = [song for song in songs if str(song.get("id")) not in song_ids]
     print(len(songs))
     data = get_track_audio([song.get("id") for song in songs]).get("data")
+    print(data)
     data = {x.get("id"): x.get("url") for x in data}
     for song in songs:
         if song.get("id") in data:
