@@ -29,11 +29,8 @@ def get_track_audio(ids):
     return GetTrackAudio(song_ids=ids, bitrate=3200 * 1000)
 
 def download(url, name):
-    print(url)
-    print(name)
     if url:
         response = requests.get(url)
-        print(response.text)
         if response.ok:
             extension  = "mp3"
             # # 处理扩展名，去掉?及其后面的内容
@@ -146,14 +143,10 @@ if __name__ == "__main__":
     uploader = NotionFileUploader()
     songs = notion_helper.query_all(notion_helper.song_database_id)
     song_ids = [get_property_value(song.get("properties").get("Id")) for song in songs]
-    print(os.getenv("COOKIE"))
     LoginViaCookie(MUSIC_U=os.getenv("COOKIE"))
     songs = GetPlaylistAllTracks("13176243").get("songs")
-    print(len(songs))
     songs = [song for song in songs if str(song.get("id")) not in song_ids]
-    print(len(songs))
     data = get_track_audio([song.get("id") for song in songs]).get("data")
-    print(data)
     data = {x.get("id"): x.get("url") for x in data}
     for song in songs:
         if song.get("id") in data:
