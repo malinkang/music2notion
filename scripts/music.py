@@ -31,6 +31,7 @@ def get_track_audio(ids):
 def download(url, name):
     if url:
         response = requests.get(url)
+        print(response.text)
         if response.ok:
             extension  = "mp3"
             # # 处理扩展名，去掉?及其后面的内容
