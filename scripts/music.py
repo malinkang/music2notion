@@ -147,6 +147,7 @@ if __name__ == "__main__":
     songs = notion_helper.query_all(notion_helper.song_database_id)
     song_ids = [get_property_value(song.get("properties").get("Id")) for song in songs]
     LoginViaCookie(MUSIC_U=os.getenv("COOKIE"))
+    print(os.getenv("COOKIE"))
     songs = GetPlaylistAllTracks("13176243").get("songs")
     print(len(songs))
     songs = [song for song in songs if str(song.get("id")) not in song_ids]
