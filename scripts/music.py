@@ -29,6 +29,8 @@ def get_track_audio(ids):
     return GetTrackAudio(song_ids=ids, bitrate=3200 * 1000)
 
 def download(url, name):
+    print(url)
+    print(name)
     if url:
         response = requests.get(url)
         print(response.text)
