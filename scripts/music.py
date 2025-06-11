@@ -25,8 +25,11 @@ from pyncm.apis.track import (
 def get_artist_avatar(id):
     return GetArtistDetails(id).get("data").get("artist").get("avatar")
 
-def get_track_audio(ids):
-    return GetTrackAudio(song_ids=ids, bitrate=3200 * 1000)
+def get_track_audio(id):
+    data = GetTrackAudio(song_ids=[id], bitrate=3200 * 1000).get("data")
+        # data = get_track_audio([song.get("id") for song in songs]).get("data")
+    data = {x.get("id"): x.get("url") for x in data}
+    return data.get(id)
 
 def download(url, name):
     if url:
@@ -94,8 +97,10 @@ def insert_music(tracks):
             cover=get_icon(cover),
             icon=get_icon(cover),
         )
-        file_name = download(track.get("url"), track.get("name"))
-        uploader.upload_file_to_database_property(file_name,result.get("id"),"音频")
+        url = get_track_audio(track.get("id"))
+        if url:
+            file_name = download(track.get("url"), track.get("name"))
+            uploader.upload_file_to_database_property(file_name,result.get("id"),"音频")
         lyrics_file_name = get_lyrics(track.get("id"), track.get("name"))
         uploader.upload_file_to_database_property(lyrics_file_name,result.get("id"),"歌词")
 
@@ -146,10 +151,5 @@ if __name__ == "__main__":
     LoginViaCookie(MUSIC_U=os.getenv("COOKIE"))
     songs = GetPlaylistAllTracks("13176243").get("songs")
     songs = [song for song in songs if str(song.get("id")) not in song_ids]
-    data = get_track_audio([song.get("id") for song in songs]).get("data")
-    data = {x.get("id"): x.get("url") for x in data}
-    for song in songs:
-        if song.get("id") in data:
-            song["url"] = data[song.get("id")]
     insert_music(songs)
 
