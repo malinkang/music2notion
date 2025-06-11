@@ -29,6 +29,8 @@ def get_track_audio(id):
     data = GetTrackAudio(song_ids=[id], bitrate=3200 * 1000).get("data")
         # data = get_track_audio([song.get("id") for song in songs]).get("data")
     data = {x.get("id"): x.get("url") for x in data}
+    print(data)
+    print(data.get(id))
     return data.get(id)
 
 def download(url, name):
@@ -99,7 +101,7 @@ def insert_music(tracks):
         )
         url = get_track_audio(track.get("id"))
         if url:
-            file_name = download(track.get("url"), track.get("name"))
+            file_name = download(url, track.get("name"))
             uploader.upload_file_to_database_property(file_name,result.get("id"),"音频")
         lyrics_file_name = get_lyrics(track.get("id"), track.get("name"))
         uploader.upload_file_to_database_property(lyrics_file_name,result.get("id"),"歌词")
